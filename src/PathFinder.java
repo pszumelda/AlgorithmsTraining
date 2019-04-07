@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class PathFinder {
@@ -31,18 +32,22 @@ public class PathFinder {
     }
     public List<Point> findPath(boolean[][] map) {
         List<Point> path = new ArrayList<>();
-        if (findPath(map, map.length - 1, map[map.length - 1].length - 1, path))
+        HashSet<Point> checkedFailedPoints = new HashSet<>();
+        if (findPath(map, map.length - 1, map[map.length - 1].length - 1, path, checkedFailedPoints))
             return path;
         return null;
     }
 
-    private boolean findPath(boolean[][] map, int row, int col, List<Point> path) {
+    private boolean findPath(boolean[][] map, int row, int col, List<Point> path, HashSet<Point> failedPoints) {
         if (row < 0 || col < 0 || !map[row][col]) return false;
+        Point current = new Point(row,col);
+        if(failedPoints.contains(current)) return false;
         boolean isInOrigin = row == 0 && col == 0;
-        if (isInOrigin || findPath(map, row - 1, col, path) || findPath(map, row, col - 1, path)){
+        if (isInOrigin || findPath(map, row - 1, col, path, failedPoints) || findPath(map, row, col - 1, path, failedPoints)){
             path.add(new Point(row, col));
             return true;
         }
+        failedPoints.add(current);
         return false;
     }
 
